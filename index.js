@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
-const { db, connection } = require ('./config/connection');
+const db = require ('./config/connection');
 
 
 function startPrompt() {
@@ -17,7 +17,6 @@ function startPrompt() {
                 "Add a department",
                 "Add a role",
                 "Add an employee",
-                "Update employee role",
                 "Quit"
             ]
         })
@@ -42,37 +41,29 @@ function startPrompt() {
                 case "Add an employee":
                     addEmployee();
                     break;
-                case "Update employee role":
-                    updateEmployeeRole();
-                    break;
                 case "Quit":
-                    connection.end();
+                    console.log("Session Ended");
+                    db.end();
                     break;    
             }
         });
 
     function viewDepartments() {
-        let query = "SELECT * FROM departments";
-        connection.query(query, function(res) {
+        db.query("SELECT * FROM departments", (err, res) => {
             console.table(res);
             startPrompt();
-        });
-    };
+        })
+        };
 
     function viewEmployees() {
-        let query = "SELECT e.id, e.first_name, e.last_name, roles.title, departments.department_name AS department, roles.salary, concat(m.first_name, ' ' ,  m.last_name) AS manager FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id ORDER BY id ASC"; 
-        connection.query(query, function(res) {
+        db.query("SELECT * FROM employee", (err, res) => {
             console.table(res);
             startPrompt();
         });
     };
 
     function viewRoles() {
-        let query = `SELECT roles.id, roles.title, departments.department_name AS department, roles.salary
-                    FROM roles
-                    INNER JOIN departments ON roles.department_id = departments.id`;
-
-            connection.query(query, function(res) {
+            db.query("SELECT * FROM roles", (err, res) => {
                 console.table(res);    
                 startPrompt();        
             });
@@ -94,7 +85,7 @@ function startPrompt() {
             ])
 
             .then(function(response) {
-                connection.query("INSERT INTO departments SET ?", {
+                db.query("INSERT INTO departments SET ?", {
                     id: response.departmentId,
                     department_name: response.departmentName,
                 },
@@ -132,7 +123,7 @@ function startPrompt() {
             ])
 
             .then(function(response) {
-                connection.query("INSERT INTO roles SET ?", {
+                db.query("INSERT INTO roles SET ?", {
                     id: response.roleID,
                     title: response.roleName,
                     salary: response.roleSalary,
@@ -177,7 +168,7 @@ function startPrompt() {
             ])
 
             .then(function(response) {
-                connection.query("INSERT INTO employee SET ?", {
+                db.query("INSERT INTO employee SET ?", {
                     id: response.employeeID,
                     first_name: response.firstName,
                     last_name: response.lastName,
@@ -192,4 +183,5 @@ function startPrompt() {
         });
     }
 };
-     
+
+startPrompt();
