@@ -73,11 +73,6 @@ function startPrompt() {
         inquirer
             .prompt([
                 {
-                    name: "departmentId",
-                    type: "input",
-                    message: "New Department ID: ",
-                },
-                {
                     name: "departmentName",
                     type: "input",
                     message: "New Deparment Name: ",
@@ -86,7 +81,6 @@ function startPrompt() {
 
             .then(function(response) {
                 db.query("INSERT INTO departments SET ?", {
-                    id: response.departmentId,
                     department_name: response.departmentName,
                 },
                     function(err) {
@@ -100,11 +94,6 @@ function startPrompt() {
     function addRole() {
         inquirer
             .prompt([
-                {
-                    name: "roleID",
-                    type: "input",
-                    message: "New Role ID: ",
-                },
                 {
                     name: "roleName",
                     type: "input",
@@ -124,7 +113,6 @@ function startPrompt() {
 
             .then(function(response) {
                 db.query("INSERT INTO roles SET ?", {
-                    id: response.roleID,
                     title: response.roleName,
                     salary: response.roleSalary,
                     department_id: response.roleDepartment,
@@ -140,11 +128,6 @@ function startPrompt() {
     function addEmployee() {
         inquirer
             .prompt([
-                {
-                    name: "employeeID",
-                    type: "input",
-                    message: "New Employee ID: "
-                },
                 {
                     name: "firstName",
                     type: "input",
@@ -169,7 +152,6 @@ function startPrompt() {
 
             .then(function(response) {
                 db.query("INSERT INTO employee SET ?", {
-                    id: response.employeeID,
                     first_name: response.firstName,
                     last_name: response.lastName,
                     role_id: response.employeeRole,
